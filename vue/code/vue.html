@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title>vue.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+
+  <body>
+    <div id="vue">
+
+      <h3>{{ textSearch }} ( длина: {{ textSearch.length}})</h3>
+      <input type="text" size="50" v-model="textSearch">
+      
+      <button type="button" @click="getCities">Грузи</button>
+
+      <ul>
+        <li v-for="hashtag in hashtags">{{ hashtag }}</li>
+      </ul> 
+
+      <ul>
+        <li v-for="city in cities">{{ city.region }} : {{ city.city }}</li>
+      </ul>
+
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#vue',
+        data: {
+          hashtags: [],
+          cities: [],
+          textSearch: '',
+          url: {
+            hashtags: 'https://dka-develop.ru/api?type=hashtag',
+            cities: 'https://dka-develop.ru/api?type=city'
+          }
+        },
+        //Наблюдатель, наблюдает за изменение поля(textSearch:)
+        watch: {
+          textSearch: function(){
+            if(this.textSearch.length > 3 ){//this - контекст
+              this.textSearch = 'Меняем содержимое поля из кода';
+            }
+          }
+        },
+        created: function(){//Экземпляр Vue
+          
+        },
+        methods: {//метод
+          getHashtags(){
+            // Батл между стрелочной функцией и колбэк  
+            axios.get(this.url.hashtags).then((response) => {
+              console.log(this);//Проверка console
+              this.hashtags = response.data;
+            });
+          },
+          getCities(){
+            axios.get(this.url.cities).then((response) => {
+              console.log(response.data);
+              this.cities = response.data;
+            });
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
